@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Presupuesto — Dominio y publicación con Cloudflare</title>
+  <style>
+    :root {
+      --ink: #1a1f2e;
+      --muted: #5c6578;
+      --line: #d8dde8;
+      --accent: #f6821f;
+      --soft: #f7f8fb;
+      --ok: #0f7b4c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #e9ecf3;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.45;
+    }
+    .sheet {
+      max-width: 820px;
+      margin: 32px auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 28px rgba(26, 31, 46, 0.08);
+      padding: 48px 52px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 1.35rem;
+      letter-spacing: 0.02em;
+    }
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .meta {
+      text-align: right;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .meta strong { color: var(--ink); }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .card {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      padding: 14px 16px;
+      font-size: 0.92rem;
+    }
+    .card label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 8px;
+      font-size: 0.94rem;
+    }
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--soft);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    td.num, th.num { text-align: right; white-space: nowrap; }
+    .desc { color: var(--muted); font-size: 0.86rem; margin-top: 4px; }
+    .totals {
+      margin-top: 8px;
+      width: 100%;
+      max-width: 360px;
+      margin-left: auto;
+      font-size: 0.95rem;
+    }
+    .totals tr td { border-bottom: none; padding: 6px 0; }
+    .totals .grand td {
+      border-top: 2px solid var(--ink);
+      padding-top: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+    .note {
+      margin-top: 28px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--accent);
+      background: #fff8f1;
+      font-size: 0.9rem;
+    }
+    .note ul { margin: 8px 0 0; padding-left: 18px; }
+    .includes {
+      margin-top: 24px;
+      font-size: 0.92rem;
+    }
+    .includes li { margin-bottom: 6px; }
+    footer {
+      margin-top: 36px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .badge {
+      display: inline-block;
+      background: #e8f7ef;
+      color: var(--ok);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    @media print {
+      body { background: #fff; }
+      .sheet { margin: 0; border: none; box-shadow: none; max-width: none; padding: 24px; }
+    }
+    @media (max-width: 700px) {
+      .sheet { margin: 0; padding: 24px 18px; }
+      header, .grid, footer { grid-template-columns: 1fr; display: block; }
+      .meta { text-align: left; margin-top: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <article class="sheet">
+    <header>
+      <div class="brand">
+        <h1>Presupuesto de servicio</h1>
+        <p>Registro de dominio · Cloudflare · Publicación segura (Túnel)</p>
+      </div>
+      <div class="meta">
+        <div><strong>N.º:</strong> PRES-2026-001</div>
+        <div><strong>Fecha:</strong> 28 de septiembre de 2026</div>
+        <div><strong>Validez:</strong> 15 días</div>
+        <div style="margin-top:8px"><span class="badge">Propuesta profesional</span></div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <label>Cliente</label>
+        <strong>[Nombre del cliente / empresa]</strong><br />
+        Contacto: [correo o teléfono]
+      </div>
+      <div class="card">
+        <label>Proveedor</label>
+        <strong>Geordy Rodríguez</strong><br />
+        Publicación web · Cloudflare Tunnel<br />
+        Equipo: GEORDYRODRIGUEZ
+      </div>
+    </div>
+
+    <h2>Objeto del servicio</h2>
+    <p style="margin-top:0;color:var(--muted);font-size:0.95rem">
+      Adquisición de un dominio propio en <strong>Cloudflare Registrar</strong>, configuración de DNS,
+      certificado SSL (HTTPS), protección básica y publicación del sistema de tienda mediante
+      <strong>Cloudflare Tunnel</strong>, sin exponer la IP del servidor ni abrir puertos del router.
+    </p>
+
+    <h2>Detalle económico</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:8%">Ítem</th>
+          <th>Concepto</th>
+          <th class="num">Cant.</th>
+          <th class="num">P. unitario</th>
+          <th class="num">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>01</td>
+          <td>
+            <strong>Registro de dominio .com</strong> (1 año)
+            <div class="desc">
+              Compra en Cloudflare Registrar a precio de costo (sin markup).
+              Precio de referencia actual ≈ USD 10.46 / año. Incluye WHOIS privado y renovación
+              al mismo costo de registro. Dominio sugerido: <em>[nombredelnegocio].com</em>
+            </div>
+          </td>
+          <td class="num">1</td>
+          <td class="num">USD 11.00</td>
+          <td class="num">USD 11.00</td>
+        </tr>
+        <tr>
+          <td>02</td>
+          <td>
+            <strong>Plan Cloudflare Free</strong> (DNS + CDN + SSL)
+            <div class="desc">
+              DNS gestionado, certificado SSL universal HTTPS, protección DDoS básica y caché CDN.
+              Sin costo mensual de plataforma.
+            </div>
+          </td>
+          <td class="num">1</td>
+          <td class="num">USD 0.00</td>
+          <td class="num">USD 0.00</td>
+        </tr>
+        <tr>
+          <td>03</td>
+          <td>
+            <strong>Cloudflare Tunnel</strong> (conexión segura)
+            <div class="desc">
+              Túnel cifrado salida→Cloudflare. La IP real del equipo no queda pública.
+              Servicio incluido en el plan gratuito.
+            </div>
+          </td>
+          <td class="num">1</td>
+          <td class="num">USD 0.00</td>
+          <td class="num">USD 0.00</td>
+        </tr>
+        <tr>
+          <td>04</td>
+          <td>
+            <strong>Puesta en marcha profesional</strong>
+            <div class="desc">
+              Registro del dominio, configuración DNS, instalación y autenticación de
+              <code>cloudflared</code>, mapeo del hostname al servicio local, prueba HTTPS,
+              documentación breve de acceso y renovación.
+            </div>
+          </td>
+          <td class="num">1</td>
+          <td class="num">USD 80.00</td>
+          <td class="num">USD 80.00</td>
+        </tr>
+        <tr>
+          <td>05</td>
+          <td>
+            <strong>Soporte de estabilización</strong> (7 días)
+            <div class="desc">
+              Ajustes menores tras la publicación (DNS, túnel, certificado, acceso).
+              No incluye desarrollos nuevos ni cambios de funcionalidad de la tienda.
+            </div>
+          </td>
+          <td class="num">1</td>
+          <td class="num">USD 25.00</td>
+          <td class="num">USD 25.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="totals">
+      <tr>
+        <td>Subtotal servicios</td>
+        <td class="num">USD 105.00</td>
+      </tr>
+      <tr>
+        <td>Dominio (reembolso / gasto del cliente)</td>
+        <td class="num">USD 11.00</td>
+      </tr>
+      <tr>
+        <td>Impuestos / IVA</td>
+        <td class="num">Según normativa local</td>
+      </tr>
+      <tr class="grand">
+        <td>Total estimado año 1</td>
+        <td class="num">USD 116.00</td>
+      </tr>
+    </table>
+
+    <div class="includes">
+      <h2>Incluye</h2>
+      <ul>
+        <li>Dominio propio bajo marca del cliente (propiedad del cliente).</li>
+        <li>HTTPS automático (candado SSL) en el navegador.</li>
+        <li>Publicación segura con Cloudflare Tunnel (sin abrir puertos).</li>
+        <li>DNS y protección básica Cloudflare Free.</li>
+        <li>Entrega de accesos/credenciales de la cuenta Cloudflare al cliente (si aplica).</li>
+      </ul>
+
+      <h2>No incluye</h2>
+      <ul>
+        <li>Diseño o desarrollo adicional de la tienda.</li>
+        <li>Hosting en VPS/datacenter dedicado (este presupuesto usa publicación vía túnel en equipo local).</li>
+        <li>Correo corporativo (@dominio) — se puede cotizar aparte (p. ej. Google Workspace / Zoho).</li>
+        <li>Plan Cloudflare Pro (USD 20/mes) u otros add-ons de pago.</li>
+        <li>Disponibilidad 24/7 garantizada tipo SLA de datacenter.</li>
+      </ul>
+    </div>
+
+    <div class="note">
+      <strong>Costos recurrentes (a cargo del cliente)</strong>
+      <ul>
+        <li><strong>Renovación del dominio .com:</strong> ≈ USD 10.50 – 12.00 / año (precio Cloudflare a costo, sujeto a tarifa del registro).</li>
+        <li><strong>Cloudflare Free + Tunnel:</strong> USD 0 / mes.</li>
+        <li>Opciones de dominio alternativas (referencia Cloudflare): .org ≈ USD 8.50, .net ≈ USD 11.86, .co ≈ USD 30.00 / año.</li>
+      </ul>
+    </div>
+
+    <div class="includes">
+      <h2>Condiciones de pago</h2>
+      <ul>
+        <li><strong>50%</strong> al aceptar el presupuesto (reserva + registro del dominio).</li>
+        <li><strong>50%</strong> al entregar el sitio accesible por HTTPS con el dominio configurado.</li>
+        <li>El dominio queda a nombre del cliente; el gasto de registro se factura o se reembolsa contra recibo.</li>
+        <li>Tiempo estimado de entrega: <strong>1–2 días hábiles</strong> tras confirmación del nombre de dominio disponible.</li>
+      </ul>
+    </div>
+
+    <div class="grid" style="margin-top:28px">
+      <div class="card">
+        <label>Aceptación del cliente</label>
+        Nombre: ___________________________<br /><br />
+        Firma: ____________________________<br /><br />
+        Fecha: ____________________________
+      </div>
+      <div class="card">
+        <label>Proveedor</label>
+        Nombre: Geordy Rodríguez<br /><br />
+        Firma: ____________________________<br /><br />
+        Fecha: ____________________________
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        Presupuesto generado para publicación del sistema de tienda con dominio en Cloudflare.<br />
+        Precios de dominio referenciales a septiembre 2026 (Cloudflare Registrar, modelo at-cost).
+      </div>
+      <div style="text-align:right">
+        Moneda: USD<br />
+        Documento: PRES-2026-001
+      </div>
+    </footer>
+  </article>
+</body>
+</html>
